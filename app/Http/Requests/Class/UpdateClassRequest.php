@@ -7,23 +7,30 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateClassRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
+        $classId = $this->route('id');
+
         return [
-            //
+            'name' => ['required', 'string', 'max:255', "unique:class_models,name,{$classId}"],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'The class name is required.',
+            'name.string'   => 'The class name must be a string.',
+            'name.max'      => 'The class name must not exceed 255 characters.',
+            'name.unique'   => 'The class name has already been taken.',
         ];
     }
 }

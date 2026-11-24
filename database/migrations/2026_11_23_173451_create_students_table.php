@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('class_id')
-                ->constrained('classes')
+                ->constrained('class_models')
                 ->restrictOnDelete();
 
             $table->string('name', 255);

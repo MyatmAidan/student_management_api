@@ -3,47 +3,82 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Class\StoreClassRequest;
+use App\Http\Requests\Class\UpdateClassRequest;
+use App\Http\Resources\ClassResource;
+use App\Http\Responses\ApiResponse;
+use App\Services\Interfaces\ClassServiceInterface;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 
 class ClassController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function __construct(
+        private readonly ClassServiceInterface $classService
+    ) {}
+
+    public function index(): JsonResponse
     {
-        //
+        $classes = $this->classService->getAllClasses();
+
+        return ApiResponse::success(
+            ClassResource::collection($classes)->response()->getData(true),
+            'Classes retrieved successfully'
+        );
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(StoreClassRequest $request): JsonResponse
     {
-        //
+        $class = $this->classService->createClass($request->validated());
+
+        return ApiResponse::created(
+            new ClassResource($class),
+            'Class created successfully'
+        );
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(int $id): JsonResponse
     {
-        //
+        try {
+            $class = $this->classService->getClassById($id);
+
+            return ApiResponse::success(
+                new ClassResource($class),
+                'Class retrieved successfully'
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::notFound($e->getMessage());
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(UpdateClassRequest $request, int $id): JsonResponse
     {
-        //
+        try {
+            $class = $this->classService->updateClass($id, $request->validated());
+
+            return ApiResponse::success(
+                new ClassResource($class),
+                'Class updated successfully'
+            );
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::notFound($e->getMessage());
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(int $id): JsonResponse
     {
-        //
+        try {
+            $this->classService->deleteClass($id);
+
+            return ApiResponse::noContent('Class deleted successfully');
+        } catch (ModelNotFoundException $e) {
+            return ApiResponse::notFound($e->getMessage());
+        } catch (\Exception $e) {
+            return ApiResponse::error(
+                'Cannot delete class. It may have students enrolled.',
+                null,
+                409
+            );
+        }
     }
 }
