@@ -1,59 +1,204 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Student Management API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A RESTful API built with **Laravel 13** for managing classes and students. Uses a repository-service pattern with Eloquent ORM and MySQL.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Tech Stack
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| Layer | Technology |
+|---|---|
+| Framework | Laravel 13 |
+| Language | PHP 8.3 |
+| Database | MySQL |
+| Architecture | Repository → Service → Controller |
+| Response | Unified `ApiResponse` wrapper |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Requirements
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- PHP 8.3+
+- Composer
+- MySQL (running on port `3308` by default)
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## Project Setup
 
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### 1. Clone & install dependencies
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+cd student-management-api
+composer install
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 2. Configure environment
 
-## Contributing
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Edit `.env` and set your database credentials:
 
-## Code of Conduct
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3308
+DB_DATABASE=student_management
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 3. Run migrations
 
-## Security Vulnerabilities
+```bash
+php artisan migrate
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 4. Start the development server
 
-## License
+```bash
+php artisan serve
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# student_management_api
+API is now available at **http://localhost:8000**
+
+---
+
+## API Endpoints
+
+Base URL: `http://localhost:8000/api`
+
+### Classes
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/classes` | List all classes (paginated) |
+| `POST` | `/classes` | Create a class |
+| `GET` | `/classes/{id}` | Get a single class |
+| `PUT` | `/classes/{id}` | Update a class |
+| `DELETE` | `/classes/{id}` | Delete a class |
+
+### Students
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/students` | List all students (paginated) |
+| `POST` | `/students` | Create a student |
+| `GET` | `/students/{id}` | Get a single student |
+| `PUT` | `/students/{id}` | Update a student |
+| `DELETE` | `/students/{id}` | Delete a student |
+
+---
+
+## Request & Response Examples
+
+### Create a Class
+
+**Request**
+```json
+POST /api/classes
+{
+  "name": "Grade 10-A"
+}
+```
+
+**Response**
+```json
+{
+  "success": true,
+  "message": "Class created successfully",
+  "data": {
+    "id": 1,
+    "name": "Grade 10-A",
+    "students_count": 0,
+    "created_at": "2024-01-01 09:00:00",
+    "updated_at": "2024-01-01 09:00:00"
+  }
+}
+```
+
+### Create a Student
+
+**Request**
+```json
+POST /api/students
+{
+  "class_id": 1,
+  "name": "John Doe",
+  "email": "john@example.com",
+  "phone": "+95 9 123 456 789"
+}
+```
+
+**Response**
+```json
+{
+  "success": true,
+  "message": "Student created successfully",
+  "data": {
+    "id": 1,
+    "class_id": 1,
+    "class": { "id": 1, "name": "Grade 10-A" },
+    "name": "John Doe",
+    "email": "john@example.com",
+    "phone": "+95 9 123 456 789",
+    "created_at": "2024-01-01 09:00:00",
+    "updated_at": "2024-01-01 09:00:00"
+  }
+}
+```
+
+### List Response (Paginated)
+
+```json
+{
+  "success": true,
+  "message": "Classes retrieved successfully",
+  "data": {
+    "data": [ { "id": 1, "name": "Grade 10-A", ... } ],
+    "current_page": 1,
+    "last_page": 1,
+    "per_page": 15,
+    "total": 1
+  }
+}
+```
+
+---
+
+## Project Structure
+
+```
+app/
+├── Http/
+│   ├── Controllers/Api/     # ClassController, StudentController
+│   ├── Requests/            # Form request validation
+│   │   ├── Class/           # StoreClassRequest, UpdateClassRequest
+│   │   └── Student/         # StoreStudentRequest, UpdateStudentRequest
+│   ├── Resources/           # ClassResource, StudentResource (JSON transformers)
+│   └── Responses/           # ApiResponse (unified response helper)
+├── Models/                  # ClassModel, Student
+├── Repositories/            # ClassRepository, StudentRepository
+│   └── Interfaces/          # ClassRepositoryInterface, StudentRepositoryInterface
+├── Services/                # ClassService, StudentService
+│   └── Interfaces/          # ClassServiceInterface, StudentServiceInterface
+└── Providers/
+    └── RepositoryServiceProvider.php   # Binds interfaces to implementations
+routes/
+└── api.php                  # All API routes
+config/
+└── cors.php                 # CORS config (allows http://localhost:3000)
+```
+
+---
+
+## CORS
+
+The API allows requests from `http://localhost:3000` by default (the frontend dev server). To change allowed origins, edit `config/cors.php`:
+
+```php
+'allowed_origins' => ['http://localhost:3000'],
+```

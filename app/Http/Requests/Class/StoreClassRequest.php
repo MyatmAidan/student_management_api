@@ -12,9 +12,6 @@ class StoreClassRequest extends FormRequest
         return true;
     }
 
-    /**
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
@@ -26,8 +23,6 @@ class StoreClassRequest extends FormRequest
     {
         return [
             'name.required' => 'The class name is required.',
-            'name.string'   => 'The class name must be a string.',
-            'name.max'      => 'The class name must not exceed 255 characters.',
             'name.unique'   => 'The class name has already been taken.',
         ];
     }

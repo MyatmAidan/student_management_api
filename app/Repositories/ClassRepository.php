@@ -27,7 +27,7 @@ class ClassRepository implements ClassRepositoryInterface
     {
         $class->update($data);
 
-        return $class->fresh();
+        return ClassModel::withCount('students')->find($class->id);
     }
 
     public function delete(ClassModel $class): bool

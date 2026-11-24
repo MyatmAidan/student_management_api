@@ -1,0 +1,626 @@
+{
+	"info": {
+		"_postman_id": "student-management-api",
+		"name": "Student Management API",
+		"description": "API collection for Student Management System\n\nBase URL: {{base_url}}\n\nSet the `base_url` variable to your server URL (default: http://127.0.0.1:8000)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000",
+			"type": "string"
+		},
+		{
+			"key": "class_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "student_id",
+			"value": "1",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Classes",
+			"item": [
+				{
+					"name": "Get All Classes",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/classes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"classes"
+							]
+						},
+						"description": "Retrieve a paginated list of all classes with student count."
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"success\": true,\n  \"message\": \"Classes retrieved successfully\",\n  \"data\": {\n    \"data\": [\n      {\n        \"id\": 1,\n        \"name\": \"Class A\",\n        \"students_count\": 3,\n        \"created_at\": \"2026-11-24 00:00:00\",\n        \"updated_at\": \"2026-11-24 00:00:00\"\n      }\n    ],\n    \"current_page\": 1,\n    \"per_page\": 15,\n    \"total\": 1\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Class",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const json = pm.response.json();",
+									"    if (json.data && json.data.id) {",
+									"        pm.collectionVariables.set('class_id', json.data.id);",
+									"        console.log('class_id set to: ' + json.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"G12\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/classes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"classes"
+							]
+						},
+						"description": "Create a new class. Auto-saves the returned id into {{class_id}}."
+					},
+					"response": [
+						{
+							"name": "201 Created",
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"success\": true,\n  \"message\": \"Class created successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Class A\",\n    \"students_count\": 0,\n    \"created_at\": \"2026-11-24 00:00:00\",\n    \"updated_at\": \"2026-11-24 00:00:00\"\n  }\n}"
+						},
+						{
+							"name": "422 Validation Error",
+							"status": "Unprocessable Entity",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"message\": \"The class name is required.\",\n  \"errors\": {\n    \"name\": [\"The class name is required.\"]\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Class by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/classes/{{class_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"classes",
+								"{{class_id}}"
+							]
+						},
+						"description": "Get a single class by ID."
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"success\": true,\n  \"message\": \"Class retrieved successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Class A\",\n    \"students_count\": 0,\n    \"created_at\": \"2026-11-24 00:00:00\",\n    \"updated_at\": \"2026-11-24 00:00:00\"\n  }\n}"
+						},
+						{
+							"name": "404 Not Found",
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"success\": false,\n  \"message\": \"Class with ID 999 not found.\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Class",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"G12 Updated\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/classes/{{class_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"classes",
+								"{{class_id}}"
+							]
+						},
+						"description": "Update an existing class by ID."
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"success\": true,\n  \"message\": \"Class updated successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Class A Updated\",\n    \"students_count\": 0,\n    \"created_at\": \"2026-11-24 00:00:00\",\n    \"updated_at\": \"2026-11-24 00:10:00\"\n  }\n}"
+						},
+						{
+							"name": "404 Not Found",
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"success\": false,\n  \"message\": \"Class with ID 999 not found.\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Class",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/classes/{{class_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"classes",
+								"{{class_id}}"
+							]
+						},
+						"description": "Delete a class by ID. Returns 409 if the class has students enrolled."
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"success\": true,\n  \"message\": \"Class deleted successfully\",\n  \"data\": null\n}"
+						},
+						{
+							"name": "409 Conflict (has students)",
+							"status": "Conflict",
+							"code": 409,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"success\": false,\n  \"message\": \"Cannot delete class. It may have students enrolled.\"\n}"
+						},
+						{
+							"name": "404 Not Found",
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"success\": false,\n  \"message\": \"Class with ID 999 not found.\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Students",
+			"item": [
+				{
+					"name": "Get All Students",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/students",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students"
+							]
+						},
+						"description": "Retrieve a paginated list of all students with their class."
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"success\": true,\n  \"message\": \"Students retrieved successfully\",\n  \"data\": {\n    \"data\": [\n      {\n        \"id\": 1,\n        \"class_id\": 1,\n        \"class\": { \"id\": 1, \"name\": \"Class A\", \"created_at\": \"2026-11-24 00:00:00\", \"updated_at\": \"2026-11-24 00:00:00\" },\n        \"name\": \"John Doe\",\n        \"email\": \"john@example.com\",\n        \"phone\": \"09123456789\",\n        \"created_at\": \"2026-11-24 00:00:00\",\n        \"updated_at\": \"2026-11-24 00:00:00\"\n      }\n    ],\n    \"current_page\": 1,\n    \"per_page\": 15,\n    \"total\": 1\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Student",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const json = pm.response.json();",
+									"    if (json.data && json.data.id) {",
+									"        pm.collectionVariables.set('student_id', json.data.id);",
+									"        console.log('student_id set to: ' + json.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"class_id\": {{class_id}},\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"phone\": \"09123456789\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/students",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students"
+							]
+						},
+						"description": "Create a new student. Auto-saves the returned id into {{student_id}}."
+					},
+					"response": [
+						{
+							"name": "201 Created",
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"success\": true,\n  \"message\": \"Student created successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"class_id\": 1,\n    \"class\": { \"id\": 1, \"name\": \"Class A\", \"created_at\": \"2026-11-24 00:00:00\", \"updated_at\": \"2026-11-24 00:00:00\" },\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"phone\": \"09123456789\",\n    \"created_at\": \"2026-11-24 00:00:00\",\n    \"updated_at\": \"2026-11-24 00:00:00\"\n  }\n}"
+						},
+						{
+							"name": "422 Validation Error",
+							"status": "Unprocessable Entity",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"message\": \"The email address is required.\",\n  \"errors\": {\n    \"email\": [\"The email address is required.\"],\n    \"class_id\": [\"The selected class does not exist.\"]\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Student by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/students/{{student_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students",
+								"{{student_id}}"
+							]
+						},
+						"description": "Get a single student by ID with their class."
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"success\": true,\n  \"message\": \"Student retrieved successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"class_id\": 1,\n    \"class\": { \"id\": 1, \"name\": \"Class A\", \"created_at\": \"2026-11-24 00:00:00\", \"updated_at\": \"2026-11-24 00:00:00\" },\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"phone\": \"09123456789\",\n    \"created_at\": \"2026-11-24 00:00:00\",\n    \"updated_at\": \"2026-11-24 00:00:00\"\n  }\n}"
+						},
+						{
+							"name": "404 Not Found",
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"success\": false,\n  \"message\": \"Student with ID 999 not found.\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Student",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"class_id\": {{class_id}},\n    \"name\": \"John Doe Updated\",\n    \"email\": \"john.updated@example.com\",\n    \"phone\": \"09999999999\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/students/{{student_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students",
+								"{{student_id}}"
+							]
+						},
+						"description": "Update a student by ID. All fields are optional (partial update supported)."
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"success\": true,\n  \"message\": \"Student updated successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"class_id\": 1,\n    \"class\": { \"id\": 1, \"name\": \"Class A\", \"created_at\": \"2026-11-24 00:00:00\", \"updated_at\": \"2026-11-24 00:00:00\" },\n    \"name\": \"John Doe Updated\",\n    \"email\": \"john.updated@example.com\",\n    \"phone\": \"09999999999\",\n    \"created_at\": \"2026-11-24 00:00:00\",\n    \"updated_at\": \"2026-11-24 00:10:00\"\n  }\n}"
+						},
+						{
+							"name": "404 Not Found",
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"success\": false,\n  \"message\": \"Student with ID 999 not found.\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Student",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/students/{{student_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"students",
+								"{{student_id}}"
+							]
+						},
+						"description": "Delete a student by ID."
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"success\": true,\n  \"message\": \"Student deleted successfully\",\n  \"data\": null\n}"
+						},
+						{
+							"name": "404 Not Found",
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"success\": false,\n  \"message\": \"Student with ID 999 not found.\"\n}"
+						}
+					]
+				}
+			]
+		}
+	]
+}
